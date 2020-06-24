@@ -128,6 +128,7 @@
           </execution>
         </executions>
         <configuration>
+          <failOnNoGitDirectory>false</failOnNoGitDirectory>
           <includeOnlyProperties>
             <includeOnlyProperty>^git.remote.origin.url$</includeOnlyProperty>
           </includeOnlyProperties>
