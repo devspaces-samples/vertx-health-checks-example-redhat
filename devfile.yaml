@@ -7,11 +7,6 @@ components:
       image: registry.redhat.io/devspaces/udi-rhel8:3.0
       memoryLimit: 3Gi
       mountSources: true
-      env:
-        - name: JAVA_OPTS
-          value: "-XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xms20m -Djava.security.egd=file:/dev/./urandom -Duser.home=/home/jboss"
-        - name: MAVEN_OPTS
-          value: $(JAVA_OPTS)
       endpoints:
         - exposure: public
           name: health-checks-endpoint
@@ -19,56 +14,51 @@ components:
           targetPort: 8080
       volumeMounts:
         - name: m2
-          path: /home/jboss/.m2
-        - name: gradle
-          path: /home/jboss/.gradle
+          path: /home/user/.m2
   - name: m2
     volume:
       size: 1G
-  - name: gradle
-    volume:
-      size: 1G
 commands:
-  - id: build
+  - id: 1-build
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: mvn clean install
       group:
         kind: build
-  - id: build-and-run
+  - id: 2-build-and-run
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: mvn clean install && mvn -Dvertx.disableDnsResolver=true vertx:run
       group:
         kind: run
-  - id: run-in-debug-mode
+  - id: 3-run-in-debug-mode
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: mvn -DskipTests vertx:debug
       group:
         kind: debug
-  - id: run-tests
+  - id: 4-run-tests
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: mvn verify
       group:
         kind: debug
-  - id: log-into-deployment-cluster
+  - id: 5-log-into-deployment-cluster
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: |
           echo
           echo "Before you can deploy this application to an openshift cluster,"
-          echo "you must run 'oc login ...' in the maven terminal."
+          echo "you must run 'oc login ...' in the tools terminal."
           echo
       group:
         kind: run
-  - id: deploy-to-openshift
+  - id: 6-deploy-to-openshift
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
