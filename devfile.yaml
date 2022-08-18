@@ -53,8 +53,9 @@ commands:
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
       commandLine: |
           echo
-          echo "Before you can deploy this application to an openshift cluster,"
-          echo "you must run 'oc login ...' in the tools terminal."
+          echo "You are already logged in to the current cluster. However, if you want"
+          echo "to deploy this application to a different OpenShift cluster, you must"
+          echo "run 'oc login ...' in the tools terminal."
           echo
       group:
         kind: run
@@ -62,6 +63,6 @@ commands:
     exec:
       component: tools
       workingDir: ${PROJECTS_ROOT}/vertx-health-checks-example-redhat
-      commandLine: mvn fabric8:deploy -Popenshift -DskipTests -Dvertx.disableDnsResolver=true
+      commandLine: oc project $DEVWORKSPACE_NAMESPACE && mvn fabric8:deploy -Popenshift -DskipTests -Dvertx.disableDnsResolver=true
       group:
         kind: run
